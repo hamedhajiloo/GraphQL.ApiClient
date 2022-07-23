@@ -56,9 +56,9 @@ namespace GraphQL.ApiClient.Controllers
             string path = Path.Combine(_hostEnvironment.WebRootPath, "index.html");
             var content = await System.IO.File.ReadAllTextAsync(path);
             var result = string.Format(content, resultStr);
-            var randomName = Guid.NewGuid().ToString();
+            var randomName = DateTimeOffset.Now.ToString("yyyyMMddHHmmss");
             string newPath = Path.Combine(_hostEnvironment.WebRootPath, $"index_{randomName}.html");
-            System.IO.File.Create(newPath);
+            await System.IO.File.WriteAllTextAsync(newPath, result);
             return Ok(result);
         }
     }

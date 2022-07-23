@@ -24,12 +24,41 @@ namespace GraphQL.ApiClient.Controllers
         [HttpGet, Route("ReturnHtml")]
         public async Task<IActionResult> ReturnHtml()
         {
+            try
+            {
+                var transfers = await _transferService.GetTransfers();
+                var resultStr = transfers.ToString();
+
+                string path = Path.Combine(_hostEnvironment.WebRootPath, "index.html");
+                var content = await System.IO.File.ReadAllTextAsync(path);
+                var result = string.Format(content, resultStr);
+
+                //Html File Read
+                //{0}
+                //Replace resultStr
+                //File Write
+                //
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpGet, Route("RedirectToHtml")]
+        public async Task<IActionResult> RedirectToHtml()
+        {
             var transfers = await _transferService.GetTransfers();
             var resultStr = transfers.ToString();
 
             string path = Path.Combine(_hostEnvironment.WebRootPath, "index.html");
             var content = await System.IO.File.ReadAllTextAsync(path);
             var result = string.Format(content, resultStr);
+            var randomName = Guid.NewGuid().ToString();
+            string newPath = Path.Combine(_hostEnvironment.WebRootPath, $"index_{randomName}.html");
+            System.IO.File.Create(newPath);
             return Ok(result);
         }
     }
